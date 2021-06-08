@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CTVM</title>
+    <link rel="stylesheet" href="CSS\Main.css" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+</head>
+
+<body>
+    <h2>My Map</h2>
+    <div id="map" class="map"></div>
+    <script type="text/javascript">
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([10, 49]),
+                zoom: 6
+            })
+        });
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(pos) {
+                console.log();
+                map.setView(new ol.View({
+                    center: ol.proj.fromLonLat([pos.coords.longitude, pos.coords.latitude]),
+                    zoom: 10
+                }));
+            });
+        }
+    </script>
+
+    <footer>
+        <p> &copy; CTVM | 2021</p>
+    </footer>
+</body>
+
+</html>
