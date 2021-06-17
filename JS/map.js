@@ -10,6 +10,7 @@ var map = new ol.Map({
         zoom: 6
     })
 });
+
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(pos) {
         console.log();
@@ -19,3 +20,17 @@ if (navigator.geolocation) {
         }));
     });
 }
+
+var layer = new ol.layer.Vector({
+        source: new ol.source.Vector({
+            features: [
+                new ol.Feature({
+                    geometry: new ol.geom.Point(ol.proj.fromLonLat([8.4036527, 49.0068901]))
+                })
+            ]
+        })
+});
+
+map.addLayer(layer);
+
+

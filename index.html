@@ -3,9 +3,10 @@
 
 <head>
     <meta charset="utf-8" />
+    <script src="https://unpkg.com/elm-pep"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CTVM</title>
-    <link rel="stylesheet" href="CSS\Main.css" />
+    <link rel="stylesheet" href="CSS/Main.css" type="text/css"/>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
 </head>
@@ -13,7 +14,10 @@
 <body>
     <h2>CTVM</h2>
     <div id="map" class="map"></div>
-
+    <div id="popup" class="ol-popup">
+        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+        <div id="popup-content"></div>
+    </div>
 
 
     <footer>
@@ -22,6 +26,7 @@
 
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
     <script type="text/javascript" src="JS/map.js"></script>
+    <script type="text/javascript" src="JS/popup.js"></script>
 </body>
 
 </html>
