@@ -1,3 +1,5 @@
+var loc = [10, 49]
+
 var map = new ol.Map({
     target: 'map',
     layers: [
@@ -6,16 +8,17 @@ var map = new ol.Map({
         })
     ],
     view: new ol.View({
-        center: ol.proj.fromLonLat([10, 49]),
+        center: ol.proj.fromLonLat(loc),
         zoom: 6
     })
 });
 
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(pos) {
+        loc = [pos.coords.longitude, pos.coords.latitude]
         console.log();
         map.setView(new ol.View({
-            center: ol.proj.fromLonLat([pos.coords.longitude, pos.coords.latitude]),
+            center: ol.proj.fromLonLat(loc),
             zoom: 10
         }));
     });
