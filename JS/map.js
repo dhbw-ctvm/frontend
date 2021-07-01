@@ -17,17 +17,19 @@ if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(pos) {
         loc = [pos.coords.longitude, pos.coords.latitude]
         console.log();
-      /*  $.ajax({
-           url: 'http://localhost:8081/incidence',
-           data: JSON.stringify({long: loc[0], lat: loc[1]}),
-           dataType: "json",
-           headers:{
-               "content-type":"application/json"
-           },
-           success: function(data){
-               console.log(data)
-           }
-       }); */
+
+        /*
+        $.ajax({
+            url: 'http://localhost:8081/incidence',
+            data: {
+                long: loc[0],
+                lat: loc[1]
+            },
+            success: function(data){
+                console.log(data)
+            }
+        }); */
+
         map.setView(new ol.View({
             center: ol.proj.fromLonLat(loc),
             zoom: 10
