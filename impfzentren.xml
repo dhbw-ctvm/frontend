@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://localhost:8081/xml/impfzentren.xsl"?>
+<!DOCTYPE impfzentren SYSTEM "http://localhost:8081/xml/impfzentren.dtd">
+<impfzentren>
+    <impfzentrum>
+        <name>Braun'sches Impfzetrum zu Karlsruhe</name>
+        <addresse></addresse>
+        <koordinaten>
+            <laenge>10</laenge>
+            <breite>49</breite>
+        </koordinaten>
+        <oeffnungszeiten>
+            <zeit tag="montag">08:00-18:00</zeit>
+            <zeit tag="dienstag">08:00-18:00</zeit>
+            <zeit tag="montag">09:00-18:00</zeit>
+            <!-- usw. -->
+        </oeffnungszeiten>
+        <terminbuchung>Hier könnte Ihr Link stehen</terminbuchung>
+    </impfzentrum>
+    <impfzentrum>
+        <name>Braun'sches Impfzetrum zu Karlsruhe2</name>
+        <addresse></addresse>
+        <koordinaten>
+            <laenge>2</laenge>
+            <breite>2</breite>
+        </koordinaten>
+        <oeffnungszeiten>
+            <zeit tag="montag">08:00-18:00</zeit>
+            <zeit tag="dienstag">08:00-18:00</zeit>
+            <zeit tag="montag">09:00-18:00</zeit>
+            <!-- usw. -->
+        </oeffnungszeiten>
+        <terminbuchung>Hier könnte Ihr Link stehen</terminbuchung>
+    </impfzentrum>
+</impfzentren>

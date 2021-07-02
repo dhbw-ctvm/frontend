@@ -46,28 +46,43 @@ var styles = {
     }),
 };
 
-var startMarker = new ol.Feature({
-    type: 'icon',
-    geometry: new ol.geom.Point(ol.proj.fromLonLat([8.4036527, 49.0068901])),
-});
+//Daten aus der XML Datei lesen ----------------------------------------
+// fetch-Aufruf mit Pfad zur XML-Datei
+var xmlDoc;
+fetch('impfzentren.xml')
+    .then(function(response) {
+        // Antwort kommt als Text-String
+        return response.text();
+    })
+    .then(function(data) {
+        // String in ein XML-DOM-Objekt umwandeln
+        let parser = new DOMParser();
+        xmlDoc = parser.parseFromString(data, 'text/xml');
 
-var layer = new ol.layer.Vector({
-    source: new ol.source.Vector({
-        features: [
-            startMarker
-            /*   new ol.Feature({
-                    type: 'icon',
-                    geometry: new ol.geom.Point(ol.proj.fromLonLat([8.4036527, 49.0068901]))
-                }) */
-        ],
-    }),
-    style: function(feature){
-        return styles[feature.get('type')];
-    }
-});
+        for (var i = 0; i < xmlDoc.getElementsByTagName('impfzentrum').length; i++) {
 
+            var startMarker = new ol.Feature({
+                type: 'icon',
+                geometry: new ol.geom.Point(ol.proj.fromLonLat([xmlDoc.getElementsByTagName('impfzentrum')[i].getElementsByTagName("koordinaten")[0].getElementsByTagName("laenge")[0].textContent, xmlDoc.getElementsByTagName('impfzentrum')[i].getElementsByTagName("koordinaten")[0].getElementsByTagName("breite")[0].textContent])),
+            });
 
+            var layer = new ol.layer.Vector({
+                source: new ol.source.Vector({
+                    features: [
+                        startMarker
+                        /*   new ol.Feature({
+                                type: 'icon',
+                                geometry: new ol.geom.Point(ol.proj.fromLonLat([8.4036527, 49.0068901]))
+                            }) */
+                    ],
+                }),
+                style: function(feature) {
+                    return styles[feature.get('type')];
+                }
+            });
+            map.addLayer(layer);
+        }
 
-
-
-map.addLayer(layer);
+    }).catch(function(error) {
+        console.log("Fehler: bei Auslesen der XML-Datei " + error);
+    });
