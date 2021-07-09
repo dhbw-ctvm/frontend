@@ -17,40 +17,60 @@ map.addOverlay(popup);
 function load(url, callback) {
     let req = new XMLHttpRequest();
     req.open('GET', url);
-    
+
     try {
-        req.responseType =  'document';
-    } catch(ex) {}
+        req.responseType = 'document';
+    } catch (ex) {}
 
     req.onload = function() {
-        callback(r.responseXML);
+        callback(req.responseXML);
     };
 
     req.send();
 }
 
+function nextCenter(clickPos) {
+    let next = undefined;
+    let minDist = 999999999;
+
+    console.log("nextCenter()");
+    console.log(clickPos);
+
+    for (let i = 0; i < impfzentren.length; i++) {
+        let dx = clickPos[0] - impfzentren[i][0];
+        let dy = clickPos[1] - impfzentren[i][1];
+        let dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < minDist) {
+            next = impfzentren[i];
+            minDist = dist;
+        }
+    }
+
+    console.log(next);
+
+    return next;
+}
+
 map.on('click', function(e) {
     // Abbrechen, wenn an der geklickten Stelle kein Marker ist
-    if(!map.hasFeatureAtPixel(e.pixel)) return;
+    if (!map.hasFeatureAtPixel(e.pixel)) return;
 
-    let p = startMarker.getGeometry().flatCoordinates;
-    popup.setPosition(p);
+    let p = nextCenter(ol.proj.toLonLat(e.coordinate));
+    popup.setPosition(ol.proj.fromLonLat(p));
 
-    p = ol.proj.toLonLat(p);
-
-    if(typeof XSLTProcessor != 'undefined') {
+    if (typeof XSLTProcessor == 'undefined') {
         console.error('XSLTProcessor not found!\nCannot perform XSL-Transformation')
         return;
     }
 
-    // TODO: hier sollten die Daten zum geklickten Test-/Impfzentrum geladen werden, nicht die Inzidenz
     load('http://localhost:8081/incidence?long=' + p[0] + '&lat=' + p[1], function(xml) {
         load('http://localhost:8081/xml/inzidenz.xsl', function(xsl) {
             let processor = new XSLTProcessor();
             processor.importStylesheet(xsl);
 
             let fragment = processor.transformToFragment(xml, document);
-            
+
             content.innerHTML = '';
             content.appendChild(fragment);
         });

@@ -49,7 +49,10 @@ var styles = {
 //Daten aus der XML Datei lesen ----------------------------------------
 // fetch-Aufruf mit Pfad zur XML-Datei
 var xmlDoc;
-fetch('impfzentren.xml')
+
+var impfzentren = [];
+
+fetch('http://localhost:8081/xml/impfzentren.xml')
     .then(function(response) {
         // Antwort kommt als Text-String
         return response.text();
@@ -59,21 +62,22 @@ fetch('impfzentren.xml')
         let parser = new DOMParser();
         xmlDoc = parser.parseFromString(data, 'text/xml');
 
-        for (var i = 0; i < xmlDoc.getElementsByTagName('impfzentrum').length; i++) {
+        impfzentren = [];
 
-            var startMarker = new ol.Feature({
-                type: 'icon',
-                geometry: new ol.geom.Point(ol.proj.fromLonLat([xmlDoc.getElementsByTagName('impfzentrum')[i].getElementsByTagName("koordinaten")[0].getElementsByTagName("laenge")[0].textContent, xmlDoc.getElementsByTagName('impfzentrum')[i].getElementsByTagName("koordinaten")[0].getElementsByTagName("breite")[0].textContent])),
-            });
+        for (var i = 0; i < xmlDoc.getElementsByTagName('impfzentrum').length; i++) {
+            var coordinates = xmlDoc.getElementsByTagName('impfzentrum')[i].getElementsByTagName("koordinaten")[0];
+            var lon = coordinates.getElementsByTagName("laenge")[0].textContent;
+            var lat = coordinates.getElementsByTagName("breite")[0].textContent;
+
+            impfzentren.push([lon, lat]);
 
             var layer = new ol.layer.Vector({
                 source: new ol.source.Vector({
                     features: [
-                        startMarker
-                        /*   new ol.Feature({
-                                type: 'icon',
-                                geometry: new ol.geom.Point(ol.proj.fromLonLat([8.4036527, 49.0068901]))
-                            }) */
+                        new ol.Feature({
+                            type: 'icon',
+                            geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat]))
+                        })
                     ],
                 }),
                 style: function(feature) {
