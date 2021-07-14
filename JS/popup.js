@@ -1,12 +1,17 @@
 var container = document.getElementById('popup');
 var content = document.getElementById('popup-content');
 var closer = document.getElementById('popup-closer');
-
+/* var infobox = document.getElementById('infobox'); */
 
 var popup = new ol.Overlay({
     element: container
 });
 map.addOverlay(popup);
+
+/* var info = new ol.Overlay({
+    element: infobox
+});
+map.addOverlay(info); */
 
 /**
  * Lädt eine XML-basierte Datei von einer URL
@@ -64,8 +69,8 @@ map.on('click', function(e) {
         return;
     }
 
-    load('http://localhost:8081/incidence?long=' + p[0] + '&lat=' + p[1], function(xml) {
-        load('http://localhost:8081/xml/inzidenz.xsl', function(xsl) {
+    load('http://localhost/CTVM/Backend/xml/inzidenz.xml?long=' + p[0] + '&lat=' + p[1], function(xml) {
+        load('http://localhost/CTVM/Backend/xml/inzidenz.xsl', function(xsl) {
             let processor = new XSLTProcessor();
             processor.importStylesheet(xsl);
 

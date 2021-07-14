@@ -1,3 +1,4 @@
+var infocon = document.getElementById('infobox-content');
 var loc = [10, 49]
 
 var map = new ol.Map({
@@ -34,6 +35,22 @@ if (navigator.geolocation) {
             center: ol.proj.fromLonLat(loc),
             zoom: 10
         }));
+        
+        /* Show infobox*/
+        document.getElementById('infobox').style.visibility = "visible";
+
+        /*fill infobox with incidence of current region*/
+        load('http://localhost/CTVM/Backend/xml/inzidenz.xml?long=' + loc[0] + '&lat=' + loc[1], function(xml) {
+            load('http://localhost/CTVM/Backend/xml/inzidenz.xsl', function(xsl) {
+                let processor = new XSLTProcessor();
+                processor.importStylesheet(xsl);
+    
+                let fragment = processor.transformToFragment(xml, document);
+    
+                infocon.innerHTML = '';
+                infocon.appendChild(fragment);
+            });
+        });
     });
 }
 
@@ -52,7 +69,7 @@ var xmlDoc;
 
 var impfzentren = [];
 
-fetch('http://localhost:8081/xml/impfzentren.xml')
+fetch('http://localhost/CTVM/Backend/xml/impfzentren.xml')
     .then(function(response) {
         // Antwort kommt als Text-String
         return response.text();
