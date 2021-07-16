@@ -69,8 +69,8 @@ map.on('click', function(e) {
         return;
     }
 
-    load('http://localhost/CTVM/Backend/xml/inzidenz.xml?long=' + p[0] + '&lat=' + p[1], function(xml) {
-        load('http://localhost/CTVM/Backend/xml/inzidenz.xsl', function(xsl) {
+    load('http://localhost:8081/incidence?long=' + p[0] + '&lat=' + p[1], function(xml) {
+        load('http://localhost:8081/xml/inzidenz.xsl', function(xsl) {
             let processor = new XSLTProcessor();
             processor.importStylesheet(xsl);
 
@@ -87,34 +87,3 @@ closer.onclick = function() {
     closer.blur();
     return false;
 };
-
-/*
-var overlay = new ol.Overlay({
-    element: container,
-    autoPan: true,
-    autoPanAnimation: {
-        duration: 250
-    }
-});
-
-map.addOverlay(overlay);
-
-closer.onclick = function() {
-    overlay.setPosition(undefined);
-    closer.blur();
-    return false;
-};
-
-map.on('singleclick', function(event) {
-    if (map.hasFeatureAtPixel(event.pixel) == true) {
-        var coordinate = event.coordinate;
-
-        console.log(coordinate);
-
-        content.innerHTML = '<b> Hello World!</b><br />I am a popup.';
-        overlay.setPosition(coordinate);
-    } else {
-        overlay.setPosition(undefined);
-        close.blur();
-    }
-}); */

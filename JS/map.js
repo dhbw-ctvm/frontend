@@ -17,19 +17,6 @@ var map = new ol.Map({
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(pos) {
         loc = [pos.coords.longitude, pos.coords.latitude]
-        console.log();
-
-        /*
-        $.ajax({
-            url: 'http://localhost:8081/incidence',
-            data: {
-                long: loc[0],
-                lat: loc[1]
-            },
-            success: function(data){
-                console.log(data)
-            }
-        }); */
 
         map.setView(new ol.View({
             center: ol.proj.fromLonLat(loc),
@@ -40,7 +27,8 @@ if (navigator.geolocation) {
         document.getElementById('infobox').style.visibility = "visible";
 
         /*fill infobox with incidence of current region*/
-        load('http://localhost/CTVM/Backend/xml/inzidenz.xml?long=' + loc[0] + '&lat=' + loc[1], function(xml) {
+        // load('http://localhost/CTVM/Backend/xml/inzidenz.xml?long=' + loc[0] + '&lat=' + loc[1], function(xml) {
+        load('http://localhost/CTVM/Backend/xml/inzidenz.xml', function(xml) {
             load('http://localhost/CTVM/Backend/xml/inzidenz.xsl', function(xsl) {
                 let processor = new XSLTProcessor();
                 processor.importStylesheet(xsl);
