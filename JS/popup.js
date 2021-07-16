@@ -1,12 +1,17 @@
 var container = document.getElementById('popup');
 var content = document.getElementById('popup-content');
 var closer = document.getElementById('popup-closer');
-
+/* var infobox = document.getElementById('infobox'); */
 
 var popup = new ol.Overlay({
     element: container
 });
 map.addOverlay(popup);
+
+/* var info = new ol.Overlay({
+    element: infobox
+});
+map.addOverlay(info); */
 
 /**
  * Lädt eine XML-basierte Datei von einer URL
@@ -82,34 +87,3 @@ closer.onclick = function() {
     closer.blur();
     return false;
 };
-
-/*
-var overlay = new ol.Overlay({
-    element: container,
-    autoPan: true,
-    autoPanAnimation: {
-        duration: 250
-    }
-});
-
-map.addOverlay(overlay);
-
-closer.onclick = function() {
-    overlay.setPosition(undefined);
-    closer.blur();
-    return false;
-};
-
-map.on('singleclick', function(event) {
-    if (map.hasFeatureAtPixel(event.pixel) == true) {
-        var coordinate = event.coordinate;
-
-        console.log(coordinate);
-
-        content.innerHTML = '<b> Hello World!</b><br />I am a popup.';
-        overlay.setPosition(coordinate);
-    } else {
-        overlay.setPosition(undefined);
-        close.blur();
-    }
-}); */
