@@ -136,7 +136,7 @@ var testDoc;
 
 var testzentren = [];
 
-fetch('http://localhost/CTVM/Backend/xml/testzentren.xml')
+fetch('http://127.0.0.1:8081/centers/test')
     .then(function(response) {
         // Antwort kommt als Text-String
         return response.text();
