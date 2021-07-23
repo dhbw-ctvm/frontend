@@ -14,6 +14,31 @@ var map = new ol.Map({
     })
 });
 
+var styles = {
+    'iconimpf': new ol.style.Style({
+        image: new ol.style.Icon({
+            anchor: [0.5, 1],
+            zoom: 0.1,
+            src: 'markerimpf.png',
+            //blau
+        }),
+    }),
+    'icontest': new ol.style.Style({
+        image: new ol.style.Icon({
+            anchor: [0.5, 1],
+            zoom: 0.1,
+            src: 'markertest.png',
+            //rot
+        }),
+    }),
+    'currpos': new ol.style.Style({
+        image: new ol.style.Icon({
+            anchor: [0.5, 0.5],
+            zoom: 0.1,
+            src: 'currpos.png',
+        }),
+    })
+};
 
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(pos) {
@@ -23,7 +48,7 @@ if (navigator.geolocation) {
             center: ol.proj.fromLonLat(loc),
             zoom: 10
         }));
-        
+
         /* Show infobox*/
         document.getElementById('infobox').style.visibility = "visible";
         console.log("lon" + loc[0] + "lat" + loc[1]);
@@ -59,30 +84,40 @@ if (navigator.geolocation) {
                         infocon.appendChild(fragment);
                         }); 
                     });
-                    }
+                }
             })
         })
+
+        //show position of device
+        var currpos = new ol.layer.Vector({
+            source: new ol.source.Vector({
+                features: [
+                    new ol.Feature({
+                        type: 'currpos',
+                        geometry: new ol.geom.Point(ol.proj.fromLonLat([loc[0], loc[1]]))
+                    })
+                ],
+            }),
+            style: function(feature) {
+                return styles[feature.get('type')];
+            }
+        });
+        map.addLayer(currpos);
+      
+
+        //update position
+         /*  updateloc(loc);
+        function updateloc(loc){
+            navigator.geolocation.getCurrentPosition(function(pos, loc) {
+                loc = [pos.coords.longitude, pos.coords.latitude]
+                return loc;
+            }),
+            //map.addLayer(currpos),
+            console.log("updated");
+            setTimeout(updateloc(loc), 2000)
+        }; */
     });
 }
-
-var styles = {
-    'iconimpf': new ol.style.Style({
-        image: new ol.style.Icon({
-            anchor: [0.5, 1],
-            zoom: 0.1,
-            src: 'markerimpf.png',
-            //blau
-        }),
-    }),
-    'icontest': new ol.style.Style({
-        image: new ol.style.Icon({
-            anchor: [0.5, 1],
-            zoom: 0.1,
-            src: 'markertest.png',
-            //rot
-        }),
-    }),
-};
 
 //Impfzentren aus der XML Datei lesen ----------------------------------------
 // fetch-Aufruf mit Pfad zur XML-Datei
@@ -173,4 +208,5 @@ fetch('http://127.0.0.1:8081/centers/test')
 
     }).catch(function(error) {
         console.log("Fehler: bei Auslesen der XML-Datei " + error);
-    });
+});
+
