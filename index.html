@@ -13,13 +13,17 @@
 </head>
 
 <body>
-    <div id="header" class="header">         
+    <div id="header" class="header">
         <h2>CTVM</h2>
-    <div>
+    </div>
     <div id="map" class="map">
         <!-- Set infobox on the map (upper right corner)-->
         <div id="infobox" class="infobox">
             <div id="infobox-content"></div>
+        </div>
+        <div id="markerinfo" class="markerinfo">
+            <p> <img src="markerimpf.png" alt="Impfmarker" width="15" height="15"> Impfzentrum</p>
+            <p> <img src="markertest.png" alt="Testmarker" width="15" height="15"> Testzentrum</p>
         </div>
     </div>
 
@@ -29,13 +33,9 @@
     </div>
 
     <footer>
-        <div>
-            <p>rot: Testzentrum</p>
-            <p>blau: Impfzentrum</p>
-        </div>
         <p> &copy; CTVM | 2021</p>
     </footer>
-   
+
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
     <!-- <script src="http://www.openlayers.org/api/OpenLayers.js"></script> -->
     <script type="text/javascript" src="JS/jquery.js"></script>
