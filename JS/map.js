@@ -60,31 +60,13 @@ if (navigator.geolocation) {
         //49.12925822517504, 8.9163116833507 Eppingen (Heilbronn)
         load('http://127.0.0.1:8081/incidence?long=' + loc[0] + '&lat=' + loc[1], function(xml) { 
             load('http://localhost/CTVM/Backend/xml/inzidenz.xsl', function(xsl) {
-                try{
-                    let processor = new XSLTProcessor();
-                    processor.importStylesheet(xsl);
-        
-                    let fragment = processor.transformToFragment(xml, document);
-                           
-                    infocon.innerHTML = '';
-                    infocon.appendChild(fragment);
-                    if(infocon.innerHTML == '<html><body></body></html>'){
-                        throw true;
-                    }
-                }
-                catch(e){
-                    load('http://127.0.0.1:8081/incidence?long=8.407&lat=49.000', function(xml) {
-                        load('http://localhost/CTVM/Backend/xml/inzidenz.xsl', function(xsl) {
-                        let processor = new XSLTProcessor();
-                        processor.importStylesheet(xsl);
-            
-                        let fragment = processor.transformToFragment(xml, document);
+                let processor = new XSLTProcessor();
+                processor.importStylesheet(xsl);
+    
+                let fragment = processor.transformToFragment(xml, document);
                         
-                        infocon.innerHTML = '';
-                        infocon.appendChild(fragment);
-                        }); 
-                    });
-                }
+                infocon.innerHTML = '';
+                infocon.appendChild(fragment);
             })
         })
 

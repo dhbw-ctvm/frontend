@@ -43,12 +43,14 @@ h2 {
     visibility: hidden;
     padding-left: 1%;
     padding-right: 1%;
+    padding-top: 0.5%;
+    padding-bottom: 0.5%;
 }
 
 .markerinfo {
     background-color: rgb(255, 255, 255, 0.7);
     border: 1px solid grey;
-    width: 10%;
+    width: fit-content;
     height: fit-content;
     position: fixed;
     z-index: 2;
@@ -56,6 +58,7 @@ h2 {
     margin-top: 9px;
     padding: 10px;
     visibility: visible;
+    border-radius: 10%;
 }
 
 footer {

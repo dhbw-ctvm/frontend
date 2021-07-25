@@ -40,15 +40,30 @@ function nextCenter(clickPos) {
 
     console.log("nextCenter()");
     console.log(clickPos);
-
+    
     for (let i = 0; i < impfzentren.length; i++) {
         let dx = clickPos[0] - impfzentren[i][0];
         let dy = clickPos[1] - impfzentren[i][1];
-        let dist = Math.sqrt(dx * dx + dy * dy);
+        let distI = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist < minDist) {
-            next = impfzentren[i];
-            minDist = dist;
+        for (let j = 0; j < testzentren.length; j++) {
+            let dx = clickPos[0] - testzentren[j][0];
+            let dy = clickPos[1] - testzentren[j][1];
+            let distT = Math.sqrt(dx * dx + dy * dy);
+
+            if (distI < minDist || distT < minDist) {
+                if(distI < distT){
+                    next = impfzentren[i]
+                    minDist = distI;
+                }
+                else if(distT < distI){
+                    next = testzentren[j];
+                    minDist = distT;
+                }
+                else{
+                    console.log("fehler");
+                }
+            }    
         }
     }
 
@@ -61,6 +76,7 @@ map.on('click', function(e) {
     // Abbrechen, wenn an der geklickten Stelle kein Marker ist
     if (!map.hasFeatureAtPixel(e.pixel)) return;
 
+  
     let p = nextCenter(ol.proj.toLonLat(e.coordinate));
     popup.setPosition(ol.proj.fromLonLat(p));
 
