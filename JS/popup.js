@@ -1,10 +1,9 @@
-var container = document.getElementById('popup');
 var content = document.getElementById('popup-content');
 var closer = document.getElementById('popup-closer');
 /* var infobox = document.getElementById('infobox'); */
 
 var popup = new ol.Overlay({
-    element: container
+    element: document.getElementById('popup')
 });
 map.addOverlay(popup);
 
@@ -12,27 +11,6 @@ map.addOverlay(popup);
     element: infobox
 });
 map.addOverlay(info); */
-
-/**
- * Lädt eine XML-basierte Datei von einer URL
- * 
- * @param {String} url URL zur Datei
- * @param {Function} callback Wird aufgerufen sobald die Datei erfolgreich geladen wurde. Der Inhalt der Datei wird als Funktionsparameter übergeben.
- */
-function load(url, callback) {
-    let req = new XMLHttpRequest();
-    req.open('GET', url);
-
-    try {
-        req.responseType = 'document';
-    } catch (ex) {}
-
-    req.onload = function() {
-        callback(req.responseXML);
-    };
-
-    req.send();
-}
 
 function nextCenter(clickPos) {
     let next = undefined;
@@ -67,35 +45,54 @@ function nextCenter(clickPos) {
         }
     }
 
-    console.log(next);
+   
 
     return next;
 }
+console.log('Test');
 
 map.on('click', function(e) {
     // Abbrechen, wenn an der geklickten Stelle kein Marker ist
     if (!map.hasFeatureAtPixel(e.pixel)) return;
-
   
     let p = nextCenter(ol.proj.toLonLat(e.coordinate));
     popup.setPosition(ol.proj.fromLonLat(p));
 
-    if (typeof XSLTProcessor == 'undefined') {
-        console.error('XSLTProcessor not found!\nCannot perform XSL-Transformation')
-        return;
-    }
-
-    load('http://localhost:8081/incidence?long=' + p[0] + '&lat=' + p[1], function(xml) {
-        load('http://localhost:8081/xml/inzidenz.xsl', function(xsl) {
-            let processor = new XSLTProcessor();
-            processor.importStylesheet(xsl);
-
-            let fragment = processor.transformToFragment(xml, document);
-
+    content.innerHTML = 'Lädt...';
+    xslt(
+        'http://ctvm.nkilders.de:8081/incidence?long=' + p[0] + '&lat=' + p[1],
+        'http://ctvm.nkilders.de:8081/xml/inzidenz.xsl',
+        fragment => {
             content.innerHTML = '';
-            content.appendChild(fragment);
-        });
-    });
+            content.appendChild(fragment)
+        }
+    );
+
+    // Versuch, die richtigen Daten in das Pop-Up zu schreiben :D
+   /* console.log("jetz sollte es kommen:");
+    load('http://ctvm.nkilders.de:8081/xml/impfzentren.xml', function(xml) {
+        let clickPos = ol.proj.toLonLat(e.coordinate);
+
+        console.log('Test Koordinaten: '+clickPos);
+        console.log('1: '+clickPos[0]);
+        
+        let arrTestzentrum = xml.getElementsByTagName('testzentrum');
+        console.log(arrTestzentrum);
+        for (var i = 0; i < arrTestzentrum.length; i++) {
+            console.log(i);
+            let testzentrum = arrTestzentrum[i];
+            let coords = testzentrum.getElementsByTagName('koordinaten')[0];
+
+            if(coords.getElementsByTagName("laenge")[0] == clickPos[0] &&
+                coords.getElementsByTagName("breite")[0] == clickPos[1]) {
+                    console,log('Ich bin in der if abfrage drin!');
+            }
+            var lon = coordinates.getElementsByTagName("laenge")[0].textContent;
+            var lat = coordinates.getElementsByTagName("breite")[0].textContent;
+        }
+    }); */
+
+
 });
 
 closer.onclick = function() {

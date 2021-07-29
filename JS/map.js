@@ -58,17 +58,14 @@ if (navigator.geolocation) {
         //48.94141437268078, 8.400601955059383 Ettlingen (Karlsruhe)
         //49.15083761071298, 9.184958996799912 Heilbronn
         //49.12925822517504, 8.9163116833507 Eppingen (Heilbronn)
-        load('http://127.0.0.1:8081/incidence?long=' + loc[0] + '&lat=' + loc[1], function(xml) { 
-            load('http://localhost/CTVM/Backend/xml/inzidenz.xsl', function(xsl) {
-                let processor = new XSLTProcessor();
-                processor.importStylesheet(xsl);
-    
-                let fragment = processor.transformToFragment(xml, document);
-                        
+        xslt(
+            'http://ctvm.nkilders.de:8081/incidence?long=' + loc[0] + '&lat=' + loc[1],
+            'http://ctvm.nkilders.de:8081/xml/inzidenz.xsl',
+            fragment => {
                 infocon.innerHTML = '';
                 infocon.appendChild(fragment);
-            })
-        })
+            }
+        );
 
         //show position of device
         var currpos = new ol.layer.Vector({
@@ -107,7 +104,7 @@ var impfDoc;
 
 var impfzentren = [];
 
-fetch('http://localhost/CTVM/Backend/xml/impfzentren.xml')
+fetch('http://ctvm.nkilders.de:8081/xml/impfzentren.xml')
     .then(function(response) {
         // Antwort kommt als Text-String
         return response.text();
@@ -153,7 +150,7 @@ var testDoc;
 
 var testzentren = [];
 
-fetch('http://127.0.0.1:8081/centers/test')
+fetch('http://ctvm.nkilders.de:8081/centers/test')
     .then(function(response) {
         // Antwort kommt als Text-String
         return response.text();
