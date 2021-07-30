@@ -80,7 +80,7 @@ if (navigator.geolocation) {
         // Inzidenz in der Umgebung des Nutzers laden und anzeigen
         xslt(
             'http://ctvm.nkilders.de:8081/incidence?long=' + loc[0] + '&lat=' + loc[1],
-            'http://ctvm.nkilders.de:8081/xml/inzidenz.xsl',
+            'xsl/inzidenz.xsl',
             fragment => {
                 document.getElementById('infobox').style.visibility = "visible";
                 infocon.innerHTML = '';

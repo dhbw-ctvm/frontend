@@ -46,14 +46,15 @@ map.on('click', function(e) {
     content.innerHTML = 'Lädt...';
 
     let xmlUrlBase, xslUrlBase;
-    xmlUrlBase = xslUrlBase = 'http://ctvm.nkilders.de:8081';
 
     if(next.type == 'impf') {
-        xmlUrlBase += '/center/vaccination';
-        xslUrlBase += '/xml/impfzentrum.xsl';
+        xmlUrlBase = 'http://ctvm.nkilders.de:8081/center/vaccination';
+        xslUrlBase = 'xsl/impfzentrum.xsl';
     } else if(next.type == 'test') {
-        xmlUrlBase += '/center/test';
-        xslUrlBase += '/xml/testzentrum.xsl';
+        xmlUrlBase = 'http://ctvm.nkilders.de:8081/center/test';
+        xslUrlBase = 'xsl/testzentrum.xsl';
+    } else {
+        return;
     }
 
     xslt(
