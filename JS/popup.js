@@ -1,55 +1,38 @@
 var content = document.getElementById('popup-content');
-var closer = document.getElementById('popup-closer');
-/* var infobox = document.getElementById('infobox'); */
 
 var popup = new ol.Overlay({
     element: document.getElementById('popup')
 });
 map.addOverlay(popup);
 
-/* var info = new ol.Overlay({
-    element: infobox
-});
-map.addOverlay(info); */
-
-function nextCenter(clickPos) {
+function nextCenterHelper(clickPos, arr) {
     let next = undefined;
     let minDist = 999999999;
 
-    console.log("nextCenter()");
-    console.log(clickPos);
-    
-    for (let i = 0; i < impfzentren.length; i++) {
-        let dx = clickPos[0] - impfzentren[i][0];
-        let dy = clickPos[1] - impfzentren[i][1];
-        let distI = Math.sqrt(dx * dx + dy * dy);
+    for(let i = 0; i < arr.length; i++) {
+        let dx = clickPos[0] - arr[i][0];
+        let dy = clickPos[1] - arr[i][1];
+        let dist = Math.sqrt(dx * dx + dy * dy);
 
-        for (let j = 0; j < testzentren.length; j++) {
-            let dx = clickPos[0] - testzentren[j][0];
-            let dy = clickPos[1] - testzentren[j][1];
-            let distT = Math.sqrt(dx * dx + dy * dy);
-
-            if (distI < minDist || distT < minDist) {
-                if(distI < distT){
-                    next = impfzentren[i]
-                    minDist = distI;
-                }
-                else if(distT < distI){
-                    next = testzentren[j];
-                    minDist = distT;
-                }
-                else{
-                    console.log("fehler");
-                }
-            }    
+        if(dist < minDist) {
+            next = arr[i];
+            minDist = dist;
         }
     }
 
-   
-
-    return next;
+    return { minDist: minDist, next: next };
 }
-console.log('Test');
+
+function nextCenter(clickPos) {
+    let impf = nextCenterHelper(clickPos, impfzentren);
+    let test = nextCenterHelper(clickPos, testzentren);
+
+    if(impf.minDist < test.minDist) {
+        return impf.next;
+    } else {
+        return test.next;
+    }
+}
 
 map.on('click', function(e) {
     // Abbrechen, wenn an der geklickten Stelle kein Marker ist
@@ -95,7 +78,9 @@ map.on('click', function(e) {
 
 });
 
-closer.onclick = function() {
+// Close-Listener für PopUp
+var closer = document.getElementById('popup-closer');
+closer.onclick = () => {
     popup.setPosition(undefined);
     closer.blur();
     return false;

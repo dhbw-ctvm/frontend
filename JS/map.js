@@ -1,5 +1,10 @@
 var infocon = document.getElementById('infobox-content');
-var loc = [10, 49]
+var loc = [10, 49];
+
+
+//==========================//
+// Karte in Seite einbinden //
+//==========================//
 
 var map = new ol.Map({
     target: 'map',
@@ -19,7 +24,7 @@ var styles = {
         image: new ol.style.Icon({
             anchor: [0.5, 1],
             zoom: 0.1,
-            src: 'markerimpf.png',
+            src: 'img/markerimpf.png',
             //blau
         }),
     }),
@@ -27,7 +32,7 @@ var styles = {
         image: new ol.style.Icon({
             anchor: [0.5, 1],
             zoom: 0.1,
-            src: 'markertest.png',
+            src: 'img/markertest.png',
             //rot
         }),
     }),
@@ -35,39 +40,28 @@ var styles = {
         image: new ol.style.Icon({
             anchor: [0.5, 0.5],
             zoom: 0.1,
-            src: 'currpos.png',
+            src: 'img/currpos.png',
         }),
     })
 };
 
+
+//====================================//
+// Geo-Position des Nutzers ermitteln //
+//    Inzidenz laden und anzeigen     //
+//====================================//
+
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(pos) {
-        loc = [pos.coords.longitude, pos.coords.latitude]
+        loc = [pos.coords.longitude, pos.coords.latitude];
 
+        // Zur Position des Nutzers springen
         map.setView(new ol.View({
             center: ol.proj.fromLonLat(loc),
             zoom: 10
         }));
-
-        /* Show infobox*/
-        document.getElementById('infobox').style.visibility = "visible";
-        console.log("lon" + loc[0] + "lat" + loc[1]);
         
-        /*fill infobox with incidence of current region*/
-        //49.00063203049832, 8.407617521523703 Karlsruhe
-        //48.94141437268078, 8.400601955059383 Ettlingen (Karlsruhe)
-        //49.15083761071298, 9.184958996799912 Heilbronn
-        //49.12925822517504, 8.9163116833507 Eppingen (Heilbronn)
-        xslt(
-            'http://ctvm.nkilders.de:8081/incidence?long=' + loc[0] + '&lat=' + loc[1],
-            'http://ctvm.nkilders.de:8081/xml/inzidenz.xsl',
-            fragment => {
-                infocon.innerHTML = '';
-                infocon.appendChild(fragment);
-            }
-        );
-
-        //show position of device
+        // Position des Nutzers auf der Karte markieren
         var currpos = new ol.layer.Vector({
             source: new ol.source.Vector({
                 features: [
@@ -82,28 +76,28 @@ if (navigator.geolocation) {
             }
         });
         map.addLayer(currpos);
-      
 
-        //update position
-         /*  updateloc(loc);
-        function updateloc(loc){
-            navigator.geolocation.getCurrentPosition(function(pos, loc) {
-                loc = [pos.coords.longitude, pos.coords.latitude]
-                return loc;
-            }),
-            //map.addLayer(currpos),
-            console.log("updated");
-            setTimeout(updateloc(loc), 2000)
-        }; */
+        // Inzidenz in der Umgebung des Nutzers laden und anzeigen
+        xslt(
+            'http://ctvm.nkilders.de:8081/incidence?long=' + loc[0] + '&lat=' + loc[1],
+            'http://ctvm.nkilders.de:8081/xml/inzidenz.xsl',
+            fragment => {
+                document.getElementById('infobox').style.visibility = "visible";
+                infocon.innerHTML = '';
+                infocon.appendChild(fragment);
+            }
+        );
     });
 }
 
-//Impfzentren aus der XML Datei lesen ----------------------------------------
-// fetch-Aufruf mit Pfad zur XML-Datei
-var impfDoc;
+
+//==============================================//
+// Impfzentren laden und auf der Karte anzeigen //
+//==============================================//
 
 var impfzentren = [];
 
+// Impfzentren laden
 fetch('http://ctvm.nkilders.de:8081/xml/impfzentren.xml')
     .then(function(response) {
         // Antwort kommt als Text-String
@@ -112,17 +106,20 @@ fetch('http://ctvm.nkilders.de:8081/xml/impfzentren.xml')
     .then(function(data) {
         // String in ein XML-DOM-Objekt umwandeln
         let parser = new DOMParser();
-        impfDoc = parser.parseFromString(data, 'text/xml');
+        let impfDoc = parser.parseFromString(data, 'text/xml');
 
         impfzentren = [];
 
+        // Über alle Impfzentren iterieren
         for (var i = 0; i < impfDoc.getElementsByTagName('impfzentrum').length; i++) {
             var coordinates = impfDoc.getElementsByTagName('impfzentrum')[i].getElementsByTagName("koordinaten")[0];
             var lon = coordinates.getElementsByTagName("laenge")[0].textContent;
             var lat = coordinates.getElementsByTagName("breite")[0].textContent;
 
+            // Koordinaten des Impfzentrums im impfzentren-Array speichern
             impfzentren.push([lon, lat]);
 
+            // Marker auf Karte erstellen
             var layer = new ol.layer.Vector({
                 source: new ol.source.Vector({
                     features: [
@@ -139,17 +136,20 @@ fetch('http://ctvm.nkilders.de:8081/xml/impfzentren.xml')
             map.addLayer(layer);
         }
 
-    }).catch(function(error) {
-        console.log("Fehler: bei Auslesen der XML-Datei " + error);
-    });
+    })
+    .catch(function(error) {
+        console.error("Fehler beim Laden der Impfzentren:\n" + error);
+    }
+);
 
 
-//Testzentren aus der XML Datei lesen ----------------------------------------
-// fetch-Aufruf mit Pfad zur XML-Datei
-var testDoc;
+//==============================================//
+// Testzentren laden und auf der Karte anzeigen //
+//==============================================//
 
 var testzentren = [];
 
+// Testzentren laden
 fetch('http://ctvm.nkilders.de:8081/centers/test')
     .then(function(response) {
         // Antwort kommt als Text-String
@@ -158,17 +158,20 @@ fetch('http://ctvm.nkilders.de:8081/centers/test')
     .then(function(data) {
         // String in ein XML-DOM-Objekt umwandeln
         let parser = new DOMParser();
-        testDoc = parser.parseFromString(data, 'text/xml');
+        let testDoc = parser.parseFromString(data, 'text/xml');
 
         testzentren = [];
 
+        // Über Testzentren iterieren
         for (var i = 0; i < testDoc.getElementsByTagName('testzentrum').length; i++) {
             var coordinates = testDoc.getElementsByTagName('testzentrum')[i].getElementsByTagName("koordinaten")[0];
             var lon = coordinates.getElementsByTagName("laenge")[0].textContent;
             var lat = coordinates.getElementsByTagName("breite")[0].textContent;
 
+            // Koordinaten des Testzentrums im testzentren-Array speichern
             testzentren.push([lon, lat]);
 
+            // Marker auf Karte erstellen
             var layer = new ol.layer.Vector({
                 source: new ol.source.Vector({
                     features: [
@@ -185,7 +188,8 @@ fetch('http://ctvm.nkilders.de:8081/centers/test')
             map.addLayer(layer);
         }
 
-    }).catch(function(error) {
-        console.log("Fehler: bei Auslesen der XML-Datei " + error);
-});
-
+    })
+    .catch(function(error) {
+        console.error("Fehler beim Laden der Testzentren:\n" + error);
+    }
+);
