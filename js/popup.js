@@ -28,9 +28,9 @@ function nextCenter(clickPos) {
     let test = nextCenterHelper(clickPos, testzentren);
 
     if(impf.minDist < test.minDist) {
-        return impf.next;
+        return { type: 'impf', pos: impf.next };
     } else {
-        return test.next;
+        return { type: 'test', pos: test.next };
     }
 }
 
@@ -38,44 +38,32 @@ map.on('click', function(e) {
     // Abbrechen, wenn an der geklickten Stelle kein Marker ist
     if (!map.hasFeatureAtPixel(e.pixel)) return;
   
-    let p = nextCenter(ol.proj.toLonLat(e.coordinate));
-    popup.setPosition(ol.proj.fromLonLat(p));
+    let next = nextCenter(ol.proj.toLonLat(e.coordinate));
+    if(next == undefined) return;
+
+    popup.setPosition(ol.proj.fromLonLat(next.pos));
 
     content.innerHTML = 'Lädt...';
+
+    let xmlUrlBase, xslUrlBase;
+    xmlUrlBase = xslUrlBase = 'http://ctvm.nkilders.de:8081';
+
+    if(next.type == 'impf') {
+        xmlUrlBase += '/center/vaccination';
+        xslUrlBase += '/xml/impfzentrum.xsl';
+    } else if(next.type == 'test') {
+        xmlUrlBase += '/center/test';
+        xslUrlBase += '/xml/testzentrum.xsl';
+    }
+
     xslt(
-        'http://ctvm.nkilders.de:8081/incidence?long=' + p[0] + '&lat=' + p[1],
-        'http://ctvm.nkilders.de:8081/xml/inzidenz.xsl',
+        xmlUrlBase + '?long=' + next.pos[0] + '&lat=' + next.pos[1],
+        xslUrlBase,
         fragment => {
             content.innerHTML = '';
             content.appendChild(fragment)
         }
     );
-
-    // Versuch, die richtigen Daten in das Pop-Up zu schreiben :D
-   /* console.log("jetz sollte es kommen:");
-    load('http://ctvm.nkilders.de:8081/xml/impfzentren.xml', function(xml) {
-        let clickPos = ol.proj.toLonLat(e.coordinate);
-
-        console.log('Test Koordinaten: '+clickPos);
-        console.log('1: '+clickPos[0]);
-        
-        let arrTestzentrum = xml.getElementsByTagName('testzentrum');
-        console.log(arrTestzentrum);
-        for (var i = 0; i < arrTestzentrum.length; i++) {
-            console.log(i);
-            let testzentrum = arrTestzentrum[i];
-            let coords = testzentrum.getElementsByTagName('koordinaten')[0];
-
-            if(coords.getElementsByTagName("laenge")[0] == clickPos[0] &&
-                coords.getElementsByTagName("breite")[0] == clickPos[1]) {
-                    console,log('Ich bin in der if abfrage drin!');
-            }
-            var lon = coordinates.getElementsByTagName("laenge")[0].textContent;
-            var lat = coordinates.getElementsByTagName("breite")[0].textContent;
-        }
-    }); */
-
-
 });
 
 // Close-Listener für PopUp
