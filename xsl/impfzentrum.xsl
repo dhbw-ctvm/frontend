@@ -8,15 +8,15 @@
                 <p><xsl:value-of select="addresse" /></p>
                 <br/>
                 <b>Öffnungszeiten:</b>
-                <table>
+                <table border="1">
                     <tr>
                         <th>Tag</th>
                         <th>Uhrzeit</th>
                     </tr>
                     <xsl:for-each select="oeffnungszeiten/zeit">
                         <tr>
-                            <td>*HIER FEHLT NOCH WAS*</td>
-                            <td><xsl:value select="text()"/></td>
+                            <td><xsl:value-of select="@tag"/>s</td>
+                            <td><xsl:value-of select="text()"/></td>
                         </tr>
                     </xsl:for-each>
                 </table>

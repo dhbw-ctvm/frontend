@@ -6,7 +6,7 @@
                 <p>
                     <xsl:value-of select="kreis"/>
                 </p>
-                <br/><br/>
+                <br/>
                 <p>
                     Inzidenz: <xsl:value-of select="format-number(inzidenz,'#.###')"/>
                 </p>

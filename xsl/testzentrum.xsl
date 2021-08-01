@@ -7,20 +7,6 @@
                 <br/>
                 <p><xsl:value-of select="addresse" /></p>
                 <br/>
-                <b>Öffnungszeiten:</b>
-                <table>
-                    <tr>
-                        <th>Tag</th>
-                        <th>Uhrzeit</th>
-                    </tr>
-                    <xsl:for-each select="oeffnungszeiten">
-                        <tr>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    </xsl:for-each>
-                </table>
-                <br/>
                 <a target="blank">
                     <xsl:attribute name="href">
                         <xsl:value-of select="terminbuchung"/>
