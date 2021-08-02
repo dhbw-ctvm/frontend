@@ -79,7 +79,7 @@ if (navigator.geolocation) {
 
         // Inzidenz in der Umgebung des Nutzers laden und anzeigen
         xslt(
-            'http://ctvm.nkilders.de:8081/incidence?long=' + loc[0] + '&lat=' + loc[1],
+            BACKEND_HOST + '/incidence?long=' + loc[0] + '&lat=' + loc[1],
             'xsl/inzidenz.xsl',
             fragment => {
                 document.getElementById('infobox').style.visibility = "visible";
@@ -98,7 +98,7 @@ if (navigator.geolocation) {
 var impfzentren = [];
 
 // Impfzentren laden
-fetch('http://ctvm.nkilders.de:8081/xml/impfzentren.xml')
+fetch(BACKEND_HOST + '/xml/impfzentren.xml')
     .then(function(response) {
         // Antwort kommt als Text-String
         return response.text();
@@ -150,7 +150,7 @@ fetch('http://ctvm.nkilders.de:8081/xml/impfzentren.xml')
 var testzentren = [];
 
 // Testzentren laden
-fetch('http://ctvm.nkilders.de:8081/centers/test')
+fetch(BACKEND_HOST + '/centers/test')
     .then(function(response) {
         // Antwort kommt als Text-String
         return response.text();

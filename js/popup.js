@@ -5,6 +5,14 @@ var popup = new ol.Overlay({
 });
 map.addOverlay(popup);
 
+/**
+ * Ermittelt die Koordinaten aus arr, welche den geringsten
+ * Abstand zu clickPos haben.
+ * 
+ * @param {Array<Number>} clickPos [Längengrad, Breitengrad]
+ * @param {Array<Array<Number>>} arr [[Längengrad, Breitengrad], ...]
+ * @returns JS-Objekt mit nächsten Koordinaten sowie der Entfernung zu diesen
+ */
 function nextCenterHelper(clickPos, arr) {
     let next = undefined;
     let minDist = 999999999;
@@ -23,6 +31,14 @@ function nextCenterHelper(clickPos, arr) {
     return { minDist: minDist, next: next };
 }
 
+/**
+ * Gibt abhängig von den in clickPos übergebenen Koordinaten
+ * den Typ (impf, test) sowie die Koordinaten des nächsten
+ * Impf-/Testzentrums zurück.
+ * 
+ * @param {Array<Number>} clickPos [Längengrad, Breitengrad]
+ * @returns JS-Objekt mit dem Typ und den Koordinaten des nächsten Impf-/Testzentrums
+ */
 function nextCenter(clickPos) {
     let impf = nextCenterHelper(clickPos, impfzentren);
     let test = nextCenterHelper(clickPos, testzentren);
@@ -34,13 +50,16 @@ function nextCenter(clickPos) {
     }
 }
 
-map.on('click', function(e) {
+map.on('click', e => {
     // Abbrechen, wenn an der geklickten Stelle kein Marker ist
     if (!map.hasFeatureAtPixel(e.pixel)) return;
   
+    // Nächstes Impf-/Testzentrum ermitteln
     let next = nextCenter(ol.proj.toLonLat(e.coordinate));
+    // Abbrechen, wenn kein Zentrum gefunden wurde
     if(next == undefined) return;
 
+    // Popup an die Stelle des Zentrums setzen
     popup.setPosition(ol.proj.fromLonLat(next.pos));
 
     content.innerHTML = 'Lädt...';
@@ -48,15 +67,16 @@ map.on('click', function(e) {
     let xmlUrlBase, xslUrlBase;
 
     if(next.type == 'impf') {
-        xmlUrlBase = 'http://ctvm.nkilders.de:8081/center/vaccination';
+        xmlUrlBase = BACKEND_HOST + '/center/vaccination';
         xslUrlBase = 'xsl/impfzentrum.xsl';
     } else if(next.type == 'test') {
-        xmlUrlBase = 'http://ctvm.nkilders.de:8081/center/test';
+        xmlUrlBase = BACKEND_HOST + '/center/test';
         xslUrlBase = 'xsl/testzentrum.xsl';
     } else {
         return;
     }
 
+    // Details zu angeklicktem Zentrum laden und in Popup einfügen
     xslt(
         xmlUrlBase + '?long=' + next.pos[0] + '&lat=' + next.pos[1],
         xslUrlBase,
